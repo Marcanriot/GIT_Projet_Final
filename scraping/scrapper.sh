@@ -22,3 +22,5 @@ temperatures=$(echo "$html" | grep -Eo '[0-9]{1,2}°C')
 # 5. Afficher les températures extraites
 echo "Les températures relevées sur la page :"
 echo "$temperatures"
+
+echo "$temperatures" > ../data/temperatures.txt
