@@ -21,3 +21,4 @@ if [ "$CURRENT_HOUR" -eq "20" ]; then
     # cd "$PROJECT_DIR/rapport"
     # ./generate_daily_report.sh
 fi
+#
