@@ -1,43 +1,35 @@
 #!/bin/bash
 # scrapper.sh
-# Ce script récupère la page de prévisions météo pour Paris et extrait les températures horaires.
+# Script pour récupérer la température actuelle à Puteaux depuis lameteoagricole.net
 
-# 1. Définir l'URL de la page à scraper
-URL="https://www.lachainemeteo.com/meteo-france/ville-33/previsions-meteo-paris-heure-par-heure"
+# 1. URL de la page
+URL="https://www.lameteoagricole.net/previsions-meteo-agricole/Puteaux-92800.html"
 
-# 2. Télécharger le contenu HTML de la page en mode silencieux (-s)
+# 2. Récupérer le contenu HTML
 html=$(curl -s "$URL")
 
-# 3. Vérifier que le téléchargement a réussi
+# 3. Vérifier si on a récupéré quelque chose
 if [ -z "$html" ]; then
     echo "Erreur : impossible de télécharger le contenu de $URL"
     exit 1
 fi
 
-# 4. Utiliser grep avec une expression régulière pour extraire les températures.
-#    La regex '[0-9]{1,2}°C' recherche une ou deux chiffres suivis de '°C'
-#    Cela permet d'extraire des valeurs comme "5°C", "12°C" ou "25°C".
-temperatures=$(echo "$html" | grep -Eo '[0-9]{1,2}°C')
-
-# 5. Afficher les températures extraites
-echo "Les températures relevées sur la page :"
-echo "$temperatures"
-
-echo "$temperatures" > ../data/temperatures.txt
+# 4. Extraire la température actuelle
+#    On cherche un pattern du type "XX°C" dans le HTML.
+#    Par exemple : grep -oP '[0-9]{1,2}(?=°C)'
+#    On peut affiner la regex si nécessaire (en tenant compte de la structure HTML réelle).
+temperature=$(echo "$html" | grep -oP '(?<=<span class="d-inline"[^>]*>)[0-9]+')
 
 
-#on va créer un csv pout le stockage des données
-
-
-# Récupérer la date et l'heure actuelles
+# 5. Récupérer la date et l'heure courantes
 now=$(date '+%Y-%m-%d %H:%M:%S')
 
-# Extraire les températures (ici, on prend la première trouvée pour simplifier)
-temp=$(echo "$html" | grep -Eo '[0-9]{1,2}°C' | head -n 1)
+# 6. Enregistrer dans un fichier CSV (timestamp,temperature)
+#    Assure-toi d'avoir créé ce fichier avec un en-tête :
+#      echo "timestamp,temperature" > ../data/temperatures.csv
+echo "$now,$temperature" >> ../data/temperatures.csv
 
-# Retirer le "°C" pour ne garder que le nombre
-temp_number=$(echo "$temp" | sed 's/°C//')
+# 7. Afficher un message dans le terminal
+echo "Scraping OK : $now -> ${temperature}°C"
 
-# Ajouter une ligne au fichier CSV (en-tête : timestamp,temperature)
-echo "$now,$temp_number" >> ../data/temperatures.csv
 
