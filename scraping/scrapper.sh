@@ -1,38 +1,41 @@
 #!/bin/bash
 # scrapper.sh
-# Script pour récupérer la température actuelle sur https://www.pleinchamp.com/meteo/15-jours/92000-nanterre
+# Récupère la température la plus récente depuis Infoclimat (Paris Seine - Tour Zamansky / Jussieu)
 
-URL="https://www.pleinchamp.com/meteo/15-jours/92000-nanterre"
+# 1. URL de la page à scraper
+URL="https://www.infoclimat.fr/observations-meteo/temps-reel/paris-seine-tour-zamansky-jussieu/0000h.html?unit=unitus"
 
-# 1. Récupérer le contenu HTML
-html=$(curl -s "$URL")
+# 2. Récupérer le contenu HTML
+html=$(curl -s -L \
+  -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36" \
+  "$URL")
 
-# 2. Vérifier le contenu
+# 3. Vérifier si le contenu a bien été récupéré
 if [ -z "$html" ]; then
     echo "Erreur : impossible de télécharger le contenu de $URL"
     exit 1
 fi
 
-# 3. Extraire la température
-#    On suppose qu'il existe un <div class="... cUkKTT" ...>10,8°C</div>
-#    et qu'on veut capturer tout format du type XX,XX°C ou XX°C.
-#    L'expression suivante recherche :
-#      - <div class="... cUkKTT" (peu importe ce qu'il y a entre guillemets)
-#      - ^>]*> : tout attribut éventuel avant la fermeture de la balise
-#      - [0-9]{1,2} : 1 ou 2 chiffres
-#      - ([.,][0-9]{1,2})? : éventuellement une virgule/point + 1 ou 2 chiffres
-#      - \s?°C : éventuellement un espace avant °C
-temperature=$(echo "$html" | grep -oP '(?<=<div class="[^"]*cUkKTT"[^>]*>)[0-9]{1,2}([.,][0-9]{1,2})?\s?°C' | head -n1)
+# 4. Extraire la température la plus récente (en haut du tableau)
+#    Sur Infoclimat, la colonne "Température" est souvent marquée par <td class="tc icuTxtRd">XX.X °C</td>
+#    La commande ci-dessous cherche un motif du type "XX.X °C" et prend la première occurrence (head -n1).
+temperature=$(echo "$html" \
+  | grep -oP '(?<=<td class="tc icuTxtRd">)[0-9]{1,2}\.[0-9](?= °C</td>)' \
+  | head -n1)
 
-# 4. Nettoyer la valeur (par exemple enlever l'espace au besoin)
-temperature_clean=$(echo "$temperature" | sed 's/ //g')
+# 5. Vérifier si la température a été trouvée
+if [ -z "$temperature" ]; then
+    echo "Erreur : aucune température trouvée. (Peut-être du JavaScript ou structure différente ?)"
+    exit 1
+fi
 
-# 5. Récupérer l'heure et la date
+# 6. Générer un timestamp
 now=$(date '+%Y-%m-%d %H:%M:%S')
 
-# 6. Enregistrer dans un CSV (si tu as déjà créé le fichier avec un en-tête)
-#    echo "timestamp,temperature" > ../data/temperatures.csv
-echo "$now,$temperature_clean" >> ../data/temperatures.csv
+# 7. Écrire la donnée dans le fichier CSV
+#    Assurez-vous d'avoir créé ce fichier (une seule fois) avec un en-tête :
+#       echo "timestamp,temperature" > ../data/temperatures.csv
+echo "$now,$temperature" >> ../data/temperatures.csv
 
-# 7. Afficher un message de confirmation
-echo "Scraping OK : $now -> $temperature_clean"
+# 8. Afficher un message de confirmation
+echo "Scraping OK : $now -> $temperature °C"
