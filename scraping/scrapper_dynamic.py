@@ -91,5 +91,23 @@ def main():
 
     print(f"Scraping OK : {now} -> {subscribers} abonnés")
 
+    # Valider que le nombre est bien numérique
+    if not subscribers.isdigit():
+        print("Valeur corrompue ignorée :", subscribers)
+        return
+
+
+    with open(csv_path, "a", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+
+    # Si dernière ligne == même timestamp → ignorer
+    with open(csv_path, "r", encoding="utf-8") as fr:
+        last_line = list(fr)[-1].strip().split(",")
+        if last_line[0] == now:
+            print("Donnée déjà enregistrée à ce timestamp.")
+            return
+
+    writer.writerow([now, subscribers])
+
 if __name__ == "__main__":
     main()
