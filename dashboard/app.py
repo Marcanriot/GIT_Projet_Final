@@ -21,7 +21,7 @@ app.layout = html.Div([
     dcc.Graph(id='subs-graph'),
     dcc.Interval(id='interval-component', interval=300000, n_intervals=0)  # 5 min
 ])
-
+#definition callback
 @app.callback(
     dash.dependencies.Output('subs-graph', 'figure'),
     [dash.dependencies.Input('interval-component', 'n_intervals')]
