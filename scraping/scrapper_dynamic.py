@@ -23,12 +23,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 def get_subscribers():
-    # Setup Selenium avec options headless
     chrome_options = Options()
     chrome_options.add_argument("--headless")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
-    
+
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
@@ -36,19 +35,31 @@ def get_subscribers():
     driver.get(url)
 
     try:
-        # Attendre jusqu’à 15 secondes que l’élément apparaisse
-        element = WebDriverWait(driver, 15).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "odometer-value"))
+        # Attendre jusqu'à 25 secondes que les chiffres apparaissent
+        WebDriverWait(driver, 25).until(
+            EC.presence_of_all_elements_located((By.CLASS_NAME, "odometer-value"))
         )
-        subscribers = element.text.strip().replace(",", "")
-        print("Nombre d’abonnés :", subscribers)
+
+        # Récupérer tous les <span class="odometer-value">
+        digits_elements = driver.find_elements(By.CLASS_NAME, "odometer-value")
+
+        if not digits_elements:
+            print(" Aucun élément trouvé avec la classe 'odometer-value'.")
+            return None
+
+        # Concaténer tous les chiffres
+        digits = [el.text.strip() for el in digits_elements]
+        subscriber_count = "".join(digits)
+        print(f" Nombre d’abonnés : {subscriber_count}")
+        return subscriber_count
+
     except TimeoutException:
-        print("⏱️ L'élément 'odometer-value' n'a pas été trouvé à temps.")
-        subscribers = None
+        print(" L'élément 'odometer-value' n'a pas été trouvé à temps.")
+        return None
+
     finally:
         driver.quit()
 
-    return subscribers
 
 def main():
     subscribers = get_subscribers()
