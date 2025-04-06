@@ -10,7 +10,7 @@ server = app.server  # pour déploiement éventuel
 # 🔁 Fonction de chargement de données
 def load_data():
     try:
-        df = pd.read_csv('../data/subscribers.csv', names=["timestamp", "subscribers"])
+        df = pd.read_csv('../data/subscribers.csv')  # PAS de 'names' ici !
         df["timestamp"] = pd.to_datetime(df["timestamp"], errors='coerce')
         df["subscribers"] = pd.to_numeric(df["subscribers"], errors='coerce')
         df = df.dropna()
