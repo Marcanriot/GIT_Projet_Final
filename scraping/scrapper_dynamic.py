@@ -27,6 +27,9 @@ def get_subscribers():
     chrome_options.add_argument("--headless=new")
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument(
+    "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36"
+)
 
     # Fix erreur user-data-dir
     import tempfile
@@ -38,6 +41,12 @@ def get_subscribers():
 
     url = "https://subscribercounter.com/channel/UCLA_DiR1FfKNvjuUpBHmylQ"
     driver.get(url)
+
+    with open("page_debug.html", "w", encoding="utf-8") as f:
+        f.write(driver.page_source)
+
+    time.sleep(5)
+
 
     try:
         # Attendre jusqu'à 25 secondes que les chiffres apparaissent
