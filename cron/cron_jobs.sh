@@ -10,7 +10,7 @@ PROJECT_DIR="/GIT_Projet_final"
 
 # 1. Exécuter le scrapper Python pour mettre à jour les données (nombre d'abonnés)
 cd "$PROJECT_DIR/scraping"
-
+#on déffinit le cron
 # Si tu utilises un environnement virtuel, active-le avant :
 source "$PROJECT_DIR/venv/bin/activate"
 
