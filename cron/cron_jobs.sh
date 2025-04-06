@@ -12,7 +12,7 @@ PROJECT_DIR="/GIT_Projet_final"
 cd "$PROJECT_DIR/scraping"
 
 # Si tu utilises un environnement virtuel, active-le avant :
-# source "$PROJECT_DIR/venv/bin/activate"
+source "$PROJECT_DIR/venv/bin/activate"
 
 # Lancer le script Python dynamique (Selenium)
 python scrapper_dynamic.py

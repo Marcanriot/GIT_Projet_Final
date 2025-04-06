@@ -18,33 +18,37 @@ from webdriver_manager.chrome import ChromeDriverManager
 
 URL = "https://subscribercounter.com/channel/UCLA_DiR1FfKNvjuUpBHmylQ"
 
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+
 def get_subscribers():
+    # Setup Selenium avec options headless
     chrome_options = Options()
     chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
+    url = "https://subscribercounter.com/channel/UCLA_DiR1FfKNvjuUpBHmylQ"
+    driver.get(url)
+
     try:
-        driver.get(URL)
-        # Attendre un peu plus longtemps si la page est lente
-        time.sleep(10)
-
-        # Récupérer TOUS les <span class="odometer-value"> (chaque digit)
-        digit_elements = driver.find_elements(By.CSS_SELECTOR, "span.odometer-value")
-
-        if not digit_elements:
-            print("Aucun élément trouvé avec la classe 'odometer-value'.")
-            return None
-
-        # Concaténer le texte de chaque élément
-        digits = [elem.text.strip() for elem in digit_elements if elem.text.strip()]
-        joined_text = "".join(digits)  # ex: "12,453,048"
-        # Retirer les virgules (si besoin)
-        subscriber_number = joined_text.replace(",", "")
-
-        return subscriber_number
+        # Attendre jusqu’à 15 secondes que l’élément apparaisse
+        element = WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "odometer-value"))
+        )
+        subscribers = element.text.strip().replace(",", "")
+        print("Nombre d’abonnés :", subscribers)
+    except TimeoutException:
+        print("⏱️ L'élément 'odometer-value' n'a pas été trouvé à temps.")
+        subscribers = None
     finally:
         driver.quit()
+
+    return subscribers
 
 def main():
     subscribers = get_subscribers()
