@@ -11,12 +11,14 @@ server = app.server  # pour déploiement éventuel
 def load_data():
     try:
         df = pd.read_csv('../data/subscribers.csv', names=["timestamp", "subscribers"])
-        df["timestamp"] = pd.to_datetime(df["timestamp"])
+        df["timestamp"] = pd.to_datetime(df["timestamp"], errors='coerce')
         df["subscribers"] = pd.to_numeric(df["subscribers"], errors='coerce')
-        return df.dropna()
+        df = df.dropna()
+        return df
     except Exception as e:
-        print("Erreur lors du chargement du CSV :", e)
+        print(f"Erreur lecture CSV : {e}")
         return pd.DataFrame(columns=["timestamp", "subscribers"])
+
 
 # 🌐 Layout
 app.layout = html.Div([
