@@ -75,7 +75,7 @@ def main():
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     csv_path = "../data/subscribers.csv"
 
-    # Vérifier si la donnée est déjà présente
+    # Vérifier si la donnée est déjà présente ou non
     already_logged = False
     try:
         with open(csv_path, "r", encoding="utf-8") as fr:
