@@ -65,7 +65,7 @@ def get_subscribers():
         # Nettoyer le répertoire temporaire utilisé pour --user-data-dir
         shutil.rmtree(temp_user_data_dir, ignore_errors=True)
 
-
+#main pour lancer le scrapper dynamique
 def main():
     subscribers = get_subscribers()
     if not subscribers or not subscribers.isdigit():
