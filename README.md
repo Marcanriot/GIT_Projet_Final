@@ -46,5 +46,6 @@ Un second onglet « Rapport du jour » affiche chaque soir à 20h :
 Avant 20h, le rapport affiché est celui de la veille.
 
 ## Auteurs
-Henriot MArc-Antoine
+Henriot Marc-Antoine
+
 Khadraoui Elyess
