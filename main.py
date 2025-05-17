@@ -3,6 +3,8 @@ import dash
 from dash import dcc, html
 import plotly.express as px
 import os
+from datetime import timedelta
+
 
 # Charger les données CSV
 def load_data():
@@ -13,6 +15,25 @@ def load_data():
     else:
         return pd.DataFrame(columns=["timestamp", "subscribers"])
 
+
+# Abonnés gagnés dernière heure
+def subscribers_last_hour(df):
+    if df.empty:
+        return "⏳ Pas de données disponibles."
+    now = pd.Timestamp.now(tz="UTC")
+    one_hour_ago = now - timedelta(hours=1)
+    df_last_hour = df[df["timestamp"] >= one_hour_ago]
+    if df_last_hour.shape[0] < 2:
+        return "⏳ Pas assez de données dans la dernière heure."
+    df_last_hour = df_last_hour.dropna(subset=["subscribers"])
+    start = df_last_hour["subscribers"].iloc[0]
+    end = df_last_hour["subscribers"].iloc[-1]
+    try:
+        gained = int(end - start)
+    except:
+        return "Erreur de calcul sur les données."
+    return f"Abonnés gagnés (dernière heure) : {gained:,}"
+    
 # Créer l'application Dash
 app = dash.Dash(__name__)
 app.title = "MrBeast Live Subscribers Dashboard"
