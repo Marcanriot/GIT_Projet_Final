@@ -33,6 +33,27 @@ def subscribers_last_hour(df):
     except:
         return "Erreur de calcul sur les données."
     return f"Abonnés gagnés (dernière heure) : {gained:,}"
+
+
+def subscribers_today(df):
+    today = pd.Timestamp.now(tz="UTC").normalize()
+    df_today = df[df["timestamp"] >= today]
+    if len(df_today) < 2:
+        return "Pas assez de données pour aujourd’hui."
+    start = df_today["subscribers"].iloc[0]
+    end = df_today["subscribers"].iloc[-1]
+    return f" Abonnés gagnés : {end - start:,}"
+
+
+def daily_growth_percent(df):
+    today = pd.Timestamp.now(tz="UTC").normalize()
+    df_today = df[df["timestamp"] >= today]
+    if len(df_today) < 2:
+        return "⏳ Pas assez de données pour aujourd’hui."
+    start = df_today["subscribers"].iloc[0]
+    end = df_today["subscribers"].iloc[-1]
+    growth = ((end - start) / start) * 100 if start else 0
+    return f"Taux de croissance : {growth:.2f}%"
     
 # Créer l'application Dash
 app = dash.Dash(__name__)
@@ -50,6 +71,16 @@ app.layout = html.Div([
 html.Div([
     html.H4("Abonnés (dernière heure)"),
     html.P(subscribers_last_hour(df))
+])
+
+html.Div([
+    html.H4("Abonnés gagnés aujourd’hui"),
+    html.P(subscribers_today(df))
+])
+
+html.Div([
+    html.H4("Taux de croissance aujourd’hui"),
+    html.P(daily_growth_percent(df))
 ])
 
 
