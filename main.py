@@ -72,36 +72,32 @@ def peak_growth_time(df):
 app = dash.Dash(__name__)
 app.title = "MrBeast Live Subscribers Dashboard"
 
-# Mise en page
 app.layout = html.Div([
-    html.H1("📈 Évolution des abonnés de MrBeast", style={"textAlign": "center"}),
+    html.H1("MrBeast - Dashboard abonnés", style={
+        "textAlign": "center",
+        "marginBottom": "40px"
+    }),
 
-    dcc.Interval(id="interval-component", interval=60*1000, n_intervals=0),  # Auto-refresh toutes les 60 sec
+    dcc.Tabs(id="tabs", value="live", children=[
+        dcc.Tab(label="Temps réel", value="live"),
+        dcc.Tab(label="Rapport du jour", value="report")
+    ], style={"fontWeight": "bold"}),
 
-    dcc.Graph(id="subscriber-graph")
-])
+    html.Div(id="tab-content"),
+    dcc.Interval(id="interval-component", interval=60*1000, n_intervals=0)
+], style={
+    "fontFamily": "Arial, sans-serif",
+    "padding": "20px",
+    "backgroundColor": "#e6f2ff",
+    "minHeight": "100vh"
+})
 
-html.Div([
-    html.H4("Abonnés (dernière heure)"),
-    html.P(subscribers_last_hour(df))
-])
-
-html.Div([
-    html.H4("Abonnés gagnés aujourd’hui"),
-    html.P(subscribers_today(df))
-])
-
-
-html.Div([
-    html.H4("Taux de croissance aujourd’hui"),
-    html.P(daily_growth_percent(df))
-])
-
-html.Div([
-    html.H4("Heure du pic de croissance"),
-    html.P(peak_growth_time(df))
-])
-
+# Affichage par onglet
+@app.callback(
+    dash.Output("tab-content", "children"),
+    [dash.Input("tabs", "value"),
+     dash.Input("interval-component", "n_intervals")]
+)
 
 # Callback pour mettre à jour le graphique
 @app.callback(
