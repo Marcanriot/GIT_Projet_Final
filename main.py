@@ -78,6 +78,7 @@ html.Div([
     html.P(subscribers_today(df))
 ])
 
+
 html.Div([
     html.H4("Taux de croissance aujourd’hui"),
     html.P(daily_growth_percent(df))
