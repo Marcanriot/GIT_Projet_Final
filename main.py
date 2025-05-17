@@ -47,6 +47,12 @@ app.layout = html.Div([
     dcc.Graph(id="subscriber-graph")
 ])
 
+html.Div([
+    html.H4("Abonnés (dernière heure)"),
+    html.P(subscribers_last_hour(df))
+])
+
+
 # Callback pour mettre à jour le graphique
 @app.callback(
     dash.Output("subscriber-graph", "figure"),
