@@ -21,8 +21,8 @@ Le cœur du projet repose sur deux composants :
 - **Linux** (VM Ubuntu / EC2)
 - **Cron** pour répéter le scrapping
 
-
 ## Fonctionnalités du dashboar
+
 ### Graphique principal
 Affiche l’évolution du nombre d’abonnés dans le temps
 Mise à jour automatique toutes les 5 minutes
