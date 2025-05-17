@@ -54,7 +54,20 @@ def daily_growth_percent(df):
     end = df_today["subscribers"].iloc[-1]
     growth = ((end - start) / start) * 100 if start else 0
     return f"Taux de croissance : {growth:.2f}%"
-    
+
+
+def peak_growth_time(df):
+    today = pd.Timestamp.now(tz="UTC").normalize()
+    df_today = df[df["timestamp"] >= today].copy()
+    if len(df_today) < 2:
+        return "⏳ Pas assez de données pour aujourd’hui."
+    df_today["diff"] = df_today["subscribers"].diff()
+    peak_row = df_today.loc[df_today["diff"].idxmax()]
+    peak_time = peak_row["timestamp"].strftime('%H:%M')
+    peak_gain = int(peak_row["diff"])
+    return f"Pic de +{peak_gain} abonnés à {peak_time}"
+
+
 # Créer l'application Dash
 app = dash.Dash(__name__)
 app.title = "MrBeast Live Subscribers Dashboard"
@@ -82,6 +95,11 @@ html.Div([
 html.Div([
     html.H4("Taux de croissance aujourd’hui"),
     html.P(daily_growth_percent(df))
+])
+
+html.Div([
+    html.H4("Heure du pic de croissance"),
+    html.P(peak_growth_time(df))
 ])
 
 
