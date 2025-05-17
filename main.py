@@ -146,6 +146,67 @@ def render_content(tab, n):
         ])
 
     elif tab == "report":
+        now = pd.Timestamp.now(tz="UTC")
+        today = now.normalize()
+        cutoff = today + pd.Timedelta(hours=20)
+
+        # Si on est avant 20h, afficher le rapport d'hier
+        report_date = today if now >= cutoff else today - pd.Timedelta(days=1)
+        df = load_data()
+        df_day = df[df["timestamp"].dt.normalize() == report_date]
+
+        if df_day.shape[0] < 2:
+            return html.Div([
+                html.H2("Rapport du jour", style={"marginBottom": "20px"}),
+                html.P(f"Aucune donnée suffisante pour le {report_date.date()}.")
+            ], style={"backgroundColor": "#f4f4f4", "padding": "30px", "borderRadius": "10px"})
+
+        # Calculs
+        start = df_day["subscribers"].iloc[0]
+        end = df_day["subscribers"].iloc[-1]
+        growth = end - start
+        growth_pct = ((growth / start) * 100) if start else 0
+
+        df_day["diff"] = df_day["subscribers"].diff()
+        peak_row = df_day.loc[df_day["diff"].idxmax()]
+        peak_time = peak_row["timestamp"].strftime('%H:%M')
+        peak_gain = int(peak_row["diff"])
+
+        return html.Div([
+            html.H2("Rapport du jour", style={"marginBottom": "30px"}),
+            html.Div([
+                html.Div([
+                    html.H4("Date analysée"),
+                    html.P(f"{report_date.strftime('%d/%m/%Y')}")
+                ], style={"marginBottom": "20px"}),
+
+                html.Div([
+                    html.H4("Abonnés à 00h00"),
+                    html.P(f"{start:,}")
+                ], style={"marginBottom": "20px"}),
+
+                html.Div([
+                    html.H4("Abonnés à 20h00" if now >= cutoff else "Dernier relevé disponible"),
+                    html.P(f"{end:,}")
+                ], style={"marginBottom": "20px"}),
+
+                html.Div([
+                    html.H4("Total gagné"),
+                    html.P(f"{growth:,}")
+                ], style={"marginBottom": "20px"}),
+
+                html.Div([
+                    html.H4("Croissance (%)"),
+                    html.P(f"{growth_pct:.2f} %")
+                ], style={"marginBottom": "20px"}),
+
+                html.Div([
+                    html.H4("Pic d'abonnements"),
+                    html.P(f"+{peak_gain} à {peak_time}")
+                ])
+            ])
+        ], style={"backgroundColor": "#f4f4f4", "padding": "30px", "borderRadius": "10px"})
+
 
 
 
