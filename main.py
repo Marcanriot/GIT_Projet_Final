@@ -104,6 +104,53 @@ app.layout = html.Div([
     dash.Output("subscriber-graph", "figure"),
     [dash.Input("interval-component", "n_intervals")]
 )
+
+def render_content(tab, n):
+    df = load_data()
+
+    if tab == "live":
+        return html.Div([
+            dcc.Graph(figure=generate_graph(df), style={"marginBottom": "40px"}),
+
+            html.Div([
+                html.H3("📊 Statistiques en direct", style={"marginBottom": "20px"}),
+
+                html.Div([
+                    html.H4("Abonnés (dernière heure)"),
+                    html.P(subscribers_last_hour(df))
+                ], style={"padding": "10px 20px"}),
+                html.Hr(),
+
+                html.Div([
+                    html.H4("Abonnés gagnés aujourd’hui"),
+                    html.P(subscribers_today(df))
+                ], style={"padding": "10px 20px"}),
+                html.Hr(),
+
+                html.Div([
+                    html.H4("Taux de croissance aujourd’hui"),
+                    html.P(daily_growth_percent(df))
+                ], style={"padding": "10px 20px"}),
+                html.Hr(),
+
+                html.Div([
+                    html.H4("Heure du pic de croissance"),
+                    html.P(peak_growth_time(df))
+                ], style={"padding": "10px 20px"})
+            ], style={
+                "backgroundColor": "#f9f9f9",
+                "borderRadius": "10px",
+                "padding": "20px",
+                "boxShadow": "0 2px 5px rgba(0,0,0,0.1)"
+            })
+        ])
+
+    elif tab == "report":
+
+
+
+
+
 def update_graph(n):
     df = load_data()
     if df.empty:
