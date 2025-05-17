@@ -2,4 +2,49 @@
 
 ## Description
 
-Ce projet a pour but de scrapper les données du site : https://socialcounts.org/youtube-live-subscriber-count/UCX6OQ3DkcsbYNE6H8uQQuVA. Ce site répertorie en direct le nombre d'abonnés du youtuber MrBeast. Nous avons effectué ce choix car le premier site que nous avions voulu scrapper provoquait trop d'erreurs et rendait l'analyse de données impossible. Lors de notre reprise du projet, nous avons fais un retour à 0 et nous sommes partis de nouveaux fichiers car les anciens contenaient les données de l'ancien site. Nous avons donc commencé par vérifier que le scrapping de données de ce site fonctionnait et c'était le cas. Par la suite, nous  nous some penché sur le fond du dashboard. Nous avons commencé par tester de nombreux calculs et nous nous sommes arrêtés sur ceux qui nous parraissaient les plus appropriés.
+Ce projet a pour but de scrapper les données du site : https://socialcounts.org/youtube-live-subscriber-count/UCX6OQ3DkcsbYNE6H8uQQuVA. 
+
+Ce site répertorie en direct le nombre d'abonnés du youtuber MrBeast. Nous avons effectué ce choix car le premier site que nous avions voulu scrapper provoquait trop d'erreurs et rendait l'analyse de données impossible. Lors de notre reprise du projet, nous avons fais un retour à 0 et nous sommes partis de nouveaux fichiers car les anciens contenaient les données de l'ancien site. 
+
+Nous avons donc commencé par vérifier que le scrapping de données de ce site fonctionnait et c'était le cas. Par la suite, nous  nous some penché sur le fond du dashboard. Nous avons commencé par tester de nombreux calculs et nous nous sommes arrêtés sur ceux qui nous parraissaient les plus appropriés.
+
+Le cœur du projet repose sur deux composants :
+- Un **script de scrapping** automatique lancé régulièrement
+- Un **dashboard web** interactif, codé avec **Dash** et **Plotly**
+
+## Technologies utilisées
+
+- **Python 3.9**
+- **Dash** et **Plotly** pour le dashboard web
+- **Pandas** pour la manipulation de données
+- **Bash** pour le scrapping automatique
+- **Linux** (VM Ubuntu / EC2)
+- **Cron** pour répéter le scrapping
+
+
+## Fonctionnalités du dashboar
+### Graphique principal
+Affiche l’évolution du nombre d’abonnés dans le temps
+Mise à jour automatique toutes les 5 minutes
+
+### Statistiques dynamiques
+Sous le graphique, sont affichées en temps réel :
+- Nombre d’abonnés gagnés dans la dernière heure
+- Nombre d’abonnés gagnés depuis minuit
+- Taux de croissance sur la journée
+- Heure du pic d’abonnements
+
+### Rapport journalier automatique
+Un second onglet « Rapport du jour » affiche chaque soir à 20h :
+- Le total d’abonnés gagnés dans la journée
+- La croissance en pourcentage
+- La durée de suivi
+- Les heures du premier et du dernier relevé
+- La moyenne d’abonnés gagnés par heure
+- L’heure du pic d’abonnement
+
+Avant 20h, le rapport affiché est celui de la veille.
+
+## Auteurs
+Henriot MArc-Antoine
+Khadraoui Elyess
