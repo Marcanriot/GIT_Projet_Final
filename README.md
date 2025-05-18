@@ -51,3 +51,7 @@ Avant 20h, le rapport affiché est celui de la veille.
 Henriot Marc-Antoine
 
 Khadraoui Elyess
+
+
+## 
+Projet développé dans le cadre du module Advanced Python, Git & Linux.
