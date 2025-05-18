@@ -50,12 +50,13 @@ Avant 20h, le rapport affiché est celui de la veille.
 
 ## Architecture du projet 
 
+<pre>
 ├── main.py              # Dashboard Dash (frontend + calculs)
 ├── scrap.sh             # Script bash de scrapping toutes les 5 min
 ├── subscribers.csv      # Fichier de données (timestamp, abonnés)
 ├── requirements.txt     # Dépendances Python
 └── README.md            # Présentation du projet
-
+</pre>
 
 ## Auteurs
 Henriot Marc-Antoine
